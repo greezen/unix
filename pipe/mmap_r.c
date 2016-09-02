@@ -40,17 +40,9 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	fd = open(argv[1], O_RDWR | O_CREAT, 0777);
+	fd = open(argv[1], O_RDWR);
 	if	(fd < 0) {
 		handle_err("open", 2);	
-	}
-
-	if (lseek(fd, MAPLEN-1, SEEK_SET) < 0) {
-		handle_err("lseek", 3);
-	}
-
-	if (write(fd, "\0", 1) < 0) {
-		handle_err("write", 4);
 	}
 
 	mm = mmap(NULL, MAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -61,17 +53,8 @@ int main(int argc, char *argv[])
 	close(fd);
 	
 	while (1) {
-		if (i % 2 == 0) {
-			sprintf(mm->type, "iphone");
-			sprintf(mm->version, "%ds", i);
-			sprintf(mm->color, "white%d", i);
-		} else {
-			sprintf(mm->type, "android");
-			sprintf(mm->version, "v%d", i);
-			sprintf(mm->color, "black%d", i);
-		}
+		printf("%s %s %s\n", mm->type, mm->version, mm->color);
 		i++;
-		sleep(1);
 	}
 
 	munmap(mm, MAPLEN);
